@@ -1,0 +1,29 @@
+{
+    "home": {
+        "title": "HOME",
+        "tokens": "Tokens",
+        "roadmap": "Roadmap",
+        "team": "Team",
+        "join-us": "Join Us"
+    },
+    "solutions": {
+        "title": "SOLUTIONS",
+        "defi": "Automated DeFi Trading",
+        "nft": "NFT Lease Payments",
+        "roadmap": "Roadmap",
+        "web3": "Payment Streams & Payroll"
+    },
+    "resources": {
+        "title": "RESOURCES",
+        "community": "Community",
+        "partnership": "Partnership",
+        "ambassador": "Ambassador Program"
+    },
+    "develop": {
+        "title": "DEVELOP",
+        "grant": "Grant Program",
+        "documentations": "Documentation",
+        "bounty": "Bug Bounty",
+        "testnet": "Parachain Testnet"
+    }
+}

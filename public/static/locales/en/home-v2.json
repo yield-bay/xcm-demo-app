@@ -1,0 +1,63 @@
+{
+	"intro": {
+		"slogan": "Secure and Trustless Automation",
+		"one-sentence": "Payments and finance infrastructure for the Web 3.0",
+		"one-sentence-mobile": "Payments and finance infrastructure for Web3",
+		"read-news": "Read Our News",
+		"join-our-community": "Join Our Community",
+		"join-our-ambassadors": "Join Our Ambassadors"
+	},
+	"networks": {
+		"title": "Our Networks",
+		"turing-staging": "TURING STAGING NETWORK",
+		"turing-network": "TURING NETWORK",
+		"oak-network": "OAK NETWORK",
+		"parachain-testnet": "Parachain Testnet",
+		"kusama-parachain": "Kusama Parachain",
+		"polkadot-parachain": "Polkadot Parachain",
+		"token-faucet": "Token Faucet",
+		"web-wallet": "Web Wallet",
+		"collator-request": "Collator Request",
+		"code-releases": "Releases",
+		"kusama-crowdloan": "Kusama Crowdloan",
+		"check-rewards": "Check Rewards",
+		"task-dashboard": "Task Dashboard",
+		"partnership-request": "Partnership Request",
+		"polkadot-crowdloan": "Polkadot Crowdloan",
+		"live": "Live",
+		"q2-2022": "Q2 2022",
+		"q3-2022": "Q3 2022",
+		"q4-2022": "Q4 2022"
+	},
+	"usecase": {
+		"title": "What is your automation use case?",
+		"feature-1": "Automate anything securely on-chain & decentralized",
+		"feature-2": "No code required for the consumer",
+		"feature-3": "Execute automation cross-chain",
+		"chat-with-us": "Chat with Us"
+	},
+	"news": {
+		"title": "OAK Network News",
+		"blog": "BLOG",
+		"news": "NEWS",
+		"more": "More on Medium",
+		"read": "Read Article"
+	},
+	"events": {
+		"time": {
+			"pretitle": "TIME TRIGGER",
+			"title": "Schedule future transactions",
+			"content": "Create payment streams and set up a one-time or recurring future task."
+		},
+		"price": {
+			"pretitle": "PRICE TRIGGER",
+			"title": "Trustless auto-trading",
+			"content": "Place decentralized limit and stop-loss orders without smart contracts as a middleman or private key delegation."
+		},
+		"contract": {
+			"pretitle": "SMART CONTRACT TRIGGER",
+			"title": "Custom smart contract logic triggers and actions",
+			"content": "Programmable triggers via smart contracts and custom logic"
+		}
+	}
+}

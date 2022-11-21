@@ -1,0 +1,9 @@
+export const ERROR_CODES = {
+  WALLET_MISMATCH: 1001,
+  INVALID_SIGNATURE: 1003,
+  OWN_REFERRAL_CODE: 1004,
+};
+
+export const POLKADOT_ERRORS = {
+  CANCELLED: 'Cancelled',
+};

@@ -1,0 +1,238 @@
+{
+  "notifications" : {
+    "network-error" : {
+      "message": "Network error",
+      "description": "Please retry again!"
+    },
+    "title-link-copied" : {
+      "message": "Link copied",
+      "description": "The URL to the section is copied to your clipboard."
+    },
+    "gem-purchase-successful": {
+      "title": "GEM",
+      "description": "Purchase successful. Please go to the wallet you inputted into Gem to find your tokens"
+    },
+    "gem-purchase-error": {
+      "title": "error",
+      "description": "GEM errored on purchasing tokens. Please check account and wallet balances before proceeding again"
+    },
+    "gem-launch": {
+      "title": "GEM",
+      "description": "Launching authentication to Coinbase"
+    },
+    "gem-exit": {
+      "title": "GEM",
+      "description": "Left GEM Portal. Goodbye."
+    }
+  },
+  "tokenomics": {
+    "title": "TUR Tokenomics",
+    "subtitle": "One billion TUR will be minted and distributed over a 3-year supply curve",
+    "check-out": "Check out our <1>tokenomics</1>",
+    "features" : [
+      {
+        "title": "Symbol",
+        "content": "TUR"
+      },
+      {
+        "title": "Initial Total Supply",
+        "content": "1 Billion"
+      },
+      {
+        "title": "Supply at Genesis",
+        "content": "4.8%"
+      },
+      {
+        "title": "Inflation",
+        "content": "5%"
+      },
+      {
+        "title": "Long-term Supply",
+        "content": "Deflationary"
+      },
+      {
+        "title": "Burn Mechanism",
+        "content": "Gas & Fee Instant Burning"
+      }
+    ]
+  },
+  "oak-tokenomics": {
+    "title": "OAK Tokenomics",
+    "subtitle": "OAK is a utility token with an initial supply of 1 billion, which will be minted in the genesis block at launch",
+    "check-out": "Check out our <1>tokenomics</1>",
+    "features" : [
+      {
+        "title": "Symbol",
+        "content": "OAK"
+      },
+      {
+        "title": "Relay Chain",
+        "content": "Polkadot"
+      },
+      {
+        "title": "Initial Total Supply",
+        "content": "1 Billion"
+      },
+      {
+        "title": "Inflation",
+        "content": "5%"
+      },
+      {
+        "title": "Long-term Supply",
+        "content": "Deflationary"
+      },
+      {
+        "title": "Burn Mechanism",
+        "content": "Gas & Fee Instant Burning"
+      }
+    ]
+  },
+  "join": {
+    "title": "Join now for additional rewards",
+    "subcribe-to-turing": "Subscribe to Turing Network",
+    "sign-up": "Sign up for our news",
+    "sign-up-subtitle": "Sign up with an email address to stay up to date with the latest information on the OAK Network.",
+    "pretitle": "CALL TO ACTION",
+    "enter-email": "Enter your e-mail address",
+    "input-email": "Please input your email!",
+    "join-now": "Join Now",
+    "resend-email": [
+      "You already subscribed with the above email address. Please stay tuned for more updates via email.",
+      "If you haven't received the confirmation email, <1>resend email verification.</1>"
+    ],
+    "notifications": {
+      "email-varification": {
+        "message": "Email verification",
+        "description" : "Thanks for your registration, please check your verification email!"
+      },
+      "sign-up": {
+        "message": "Sign up success",
+        "description" : "You have successfully signed up, please check your verification email."
+      },
+      "news": {
+        "message": "Sign up success",
+        "description": "Thanks for your registration!"
+      },
+      "email-verified": {
+        "message": "Email verified",
+        "description": "Your email is verified!"
+      },
+      "email-not-found": {
+        "message": "Email not found",
+        "description": "Please sign up first!"
+      },
+      "email-resent": {
+        "message": "Email resent",
+        "description": "Verification email is resent!"
+      }
+    }
+  },
+  "oak-join": {
+    "title": "Sign up to get your referral code",
+    "sign-up": "Sign up for additional rewards",
+    "sign-up-subtitle": "Share your email address to receive a referral code that can earn your bonus of up to 10%, as well as reminders about the OAK crowdloan",
+    "pretitle": "CALL TO ACTION",
+    "enter-email": "Enter your E-mail address",
+    "input-email": "Please input your email!",
+    "join-now": "Join Now",
+    "resend-email": [
+      "You already subscribed with the above email address. Please stay tuned for more updates via email.",
+      "If you haven't received the confirmation email, <1>resend email verification.</1>"
+    ],
+    "notifications": {
+      "email-varification": {
+        "message": "Email verification",
+        "description" : "Thanks for your registration, please check your verification email!"
+      },
+      "sign-up": {
+        "message": "Sign up success",
+        "description" : "You have successfully signed up, please check your verification email."
+      },
+      "news": {
+        "message": "Sign up success",
+        "description": "Thanks for your registration!"
+      },
+      "email-verified": {
+        "message": "Email verified",
+        "description": "Your email is verified!"
+      },
+      "email-not-found": {
+        "message": "Email not found",
+        "description": "Please sign up first!"
+      },
+      "email-resent": {
+        "message": "Email resent",
+        "description": "Verification email is resent!"
+      }
+    }
+  },
+  "learn": {
+    "title": "Learn about Turing Network",
+    "subtitle": "Understand the basics of Turing Network, as well as the risks and opportunities of participating in Turing crowdloan",
+    "call-to-action": "CALL TO ACTION",
+    "view-terms": "View Terms and Conditions",
+    "steps": [
+      {
+        "title": "About Turing Network",
+        "subtitle": "Learn about <1>Turing’s ambition on XCM</1>"
+      },
+      {
+        "title": "Token Model Design",
+        "subtitle": "Read the elegant <1>tokenomics design</1> behind TUR tokens"
+      },
+      {
+        "title": "Crowdloan Reward",
+        "subtitle": "Understand <1>the rewards and bonuses</1> of Turing crowdloan contribution"
+      }
+    ]
+  },
+  "oak-learn": {
+    "title": "Learn about OAK Network",
+    "subtitle": "Understand the basics of OAK Network, as well as the risks and opportunities of participating in OAK crowdloan",
+    "call-to-action": "CALL TO ACTION",
+    "steps": [
+      {
+        "title": "About OAK Network",
+        "subtitle": "Read the <1>OAK Technical Whitepaper</1> outlining our ambition for cross-chain automation"
+      },
+      {
+        "title": "Tokenomics",
+        "subtitle": "Learn more about OAK's innovative <1>token model</1>"
+      },
+      {
+        "title": "Crowdloan Rewards",
+        "subtitle": "Check out <1>reward details</1> for the OAK crowdloan"
+      }
+    ]
+  },
+  "members": {
+    "title": "Meet our team",
+    "subtitle": "Given our founding team's diverse backgrounds, we believe in everyone's perspectives being included as we build a decentralized future.",
+    "co-founder": "Co-founder",
+    "cto": "Chief Technology Officer",
+    "head-of-growth": "Chief Growth",
+    "operations": "Operations",
+    "lead-software-engineer": "Lead Software Engineer",
+    "software-engineer": "Senior Software Engineer",
+    "product-manager": "Product Manager",
+    "community-manager": "Community Manager",
+    "research-specialist": "Research Specialist",
+    "ui-designer": "UI&UX Designer",
+    "business-development-lead": "Business Development Lead",
+    "strategic-advisor": "Strategic Advisor",
+    "operations-advisor": "Operations Advisor",
+    "join-question": "Interested in joining our team?",
+    "apply-now": "Apply now",
+    "check-out": "More team members"
+  },
+	"backers": {
+		"title": "Backed by industry leaders"
+	},
+  "partners" : {
+		"title": "Trusted by Our Partners",
+		"story": "Hear <1>Their Story</1>"
+	},
+  "gemButton": {
+    "button": "Buy DOT"
+  }
+}

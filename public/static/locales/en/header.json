@@ -1,0 +1,28 @@
+{
+	"nav": {
+		"crowdloan": "Crowdloan",
+		"home": "Home",
+		"turing-token": "TUR Token",
+		"roadmap": "Roadmap",
+		"career": "Careers",
+		"team": "Team",
+		"about-us": "About Us",
+		"turing": "Turing Network",
+		"partnership": "Partners",
+		"docs": "Documentation",
+		"mediakit": "Media Kit",
+		"reward": "Rewards",
+		"check-rewards": "Check Rewards",
+		"phases": "Launch Phases",
+		"token-economics-paper": "Token Economics Paper",
+		"community": "Community",
+		"grants": "Grants",
+		"ambassador": "Ambassador",
+		"resources": "Resources",
+		"blog": "Blog",
+		"whitepaper": "Whitepaper",
+		"oak": "OAK Network",
+		"oak-token": "OAK Token",
+		"oak-phases": "Launch Phases"
+	}
+}

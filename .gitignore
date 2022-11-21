@@ -1,0 +1,15 @@
+**/.DS_Store
+src/.DS_Store
+node_modules/
+.next/
+out/
+.vscode/
+yarn-error.log
+.npmrc
+
+/.env.development
+/.env.production
+/.env.export-production
+
+# Sentry
+.sentryclirc
