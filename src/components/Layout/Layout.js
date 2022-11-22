@@ -74,7 +74,7 @@ const screenWidthModes = [
   },
 ];
 
-function Layout({ children }) {
+function Layout({ className, children }) {
   const gContext = useContext(GlobalContext);
   const { setIsMobile, setScreenWidthMode } = gContext;
 
@@ -139,7 +139,7 @@ function Layout({ children }) {
     <div>
       {headers}
       {/* <Loader id="loading" className={visibleLoader ? '' : 'inActive'} /> */}
-      <SiteWrapper>
+      <SiteWrapper className={className}>
         {children}
       </SiteWrapper>
     </div>
@@ -148,6 +148,7 @@ function Layout({ children }) {
 
 Layout.propTypes = {
   children: PropTypes.element.isRequired,
+  className: PropTypes.string.isRequired,
 };
 
 export default Layout;

@@ -1,6 +1,5 @@
 const { isEmpty } = require('lodash');
 const withOptimizedImages = require('next-optimized-images');
-const withFonts = require('next-fonts');
 const withPlugins = require('next-compose-plugins');
 
 // Specifies the domain name of the deployment.
@@ -17,6 +16,10 @@ const assetPrefixConfig = {
 let nextConfig = {
   eslint: { ignoreDuringBuilds: true },
   images: { disableStaticImages: true },
+  compiler: {
+    // see https://styled-components.com/docs/tooling#babel-plugin for more info on the options.
+    styledComponents: true,
+  },
 };
 
 nextConfig = (process.env.NODE_ENV === 'production' && !isEmpty(assetPrefixConfig?.assetPrefix)) ? { ...nextConfig, ...assetPrefixConfig } : nextConfig;
@@ -24,7 +27,6 @@ nextConfig = (process.env.NODE_ENV === 'production' && !isEmpty(assetPrefixConfi
 const moduleExports = withPlugins(
   // Plugins
   [
-    withFonts,
     [withOptimizedImages, { optimizeImages: false }],
   ],
   // Next config
