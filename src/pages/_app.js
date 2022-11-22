@@ -3,6 +3,7 @@ import App from 'next/app';
 import PropTypes from 'prop-types';
 import 'moment/locale/zh-tw';
 
+import localFont from '@next/font/local';
 import Layout from '../components/Layout';
 import { GlobalProvider } from '../context/GlobalContext';
 import nexti18N from '../../i18n';
@@ -12,15 +13,46 @@ import '../assets/fonts/fontawesome-5/webfonts/fa-brands-400.ttf';
 import '../assets/fonts/fontawesome-5/webfonts/fa-regular-400.ttf';
 import '../assets/fonts/fontawesome-5/webfonts/fa-solid-900.ttf';
 
+import '../assets/fonts/GT Walsheim Pro/GTWalsheimPro-Bold.ttf';
+import '../assets/fonts/GT Walsheim Pro/GTWalsheimPro-Light.ttf';
+import '../assets/fonts/GT Walsheim Pro/GTWalsheimPro-Medium.ttf';
+import '../assets/fonts/GT Walsheim Pro/GTWalsheimPro-Regular.ttf';
+
 import '@fortawesome/fontawesome-svg-core/styles.css';
+import '../assets/fonts/GT Walsheim Pro/stylesheet.css';
 import '../scss/styles.scss';
+
+const myFont = localFont({
+  src: [
+    {
+      path: '../assets/fonts/GT Walsheim Pro/GTWalsheimPro-Light.ttf',
+      weight: '300',
+      style: 'normal',
+    },
+    {
+      path: '../assets/fonts/GT Walsheim Pro/GTWalsheimPro-Regular.ttf',
+      weight: 'normal',
+      style: 'normal',
+    },
+    {
+      path: '../assets/fonts/GT Walsheim Pro/GTWalsheimPro-Bold.ttf',
+      weight: 'bold',
+      style: 'normal',
+    },
+    {
+      path: '../assets/fonts/GT Walsheim Pro/GTWalsheimPro-Medium.ttf',
+      weight: '500',
+      style: 'normal',
+    },
+  ],
+});
 
 const { appWithTranslation } = nexti18N;
 
 function MyApp({ Component, pageProps }) {
   return (
     <GlobalProvider>
-      <Layout pageContext={{}}>
+      <Layout pageContext={{}} className={myFont.className}>
         <Component {...pageProps} />
       </Layout>
     </GlobalProvider>

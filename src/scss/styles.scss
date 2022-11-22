@@ -1,13 +1,45 @@
-// use #FEB804 temporarily
 
-$white: #fff !default;
 $purple: #A8278C !default;
 
 $button-hover-color: $purple;
 
 body {
-  font-family: "GT Walsheim, sans-serif";
+  font-family: "GT Walsheim Pro, Helvitica, sans-serif";
   font-size: 16px;
-  background: url(/src/assets/image/background.jpg) center center / cover no-repeat rgb(3, 4, 8);
-  color: $white;
+  font-weight: 300;
+  font-style: normal;
+  color: rgb(230, 230, 230);
+  margin: 0;
+}
+
+.layout{
+  background-image: url("/image/background.jpg");
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-color: rgb(3, 4, 8);
+  display: flex;
+  flex-direction: column;
+
+  .sider{
+    width: 400px;
+    height: 100vh;
+    border-right: 1px solid rgba(255, 255, 255, 0.25);
+
+    .row{
+      height: 40px;
+    }
+  }
+}
+
+.container {
+  padding: 2rem;
+}
+
+p.grey{
+  color: rgb(230, 230, 230);
+}
+
+.main{
+
 }
