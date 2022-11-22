@@ -1,23 +1,7 @@
 import _ from 'lodash';
 import { notification } from 'antd';
-import moment from 'moment';
 
-import Parse from 'parse';
 import nexti18N from '../../i18n';
-import config from '../config';
-
-export const CROWDLOAN_STATE = {
-  PRELAUNCH: 'PRELAUNCH',
-  LAUNCH: 'LAUNCH',
-  ENDED: 'ENDED',
-};
-
-export const CROWDLOAN_TYPE = {
-  KSM: 'KSM',
-  DOT: 'DOT',
-};
-
-const { crowdloan: { beginTime: ksmBeginTime, endTime: ksmEndTime, wagmiPassword }, dotCrowdloan: { beginTime: dotBeginTime, endTime: dotEndTime } } = config;
 
 const { i18n } = nexti18N;
 
@@ -98,123 +82,11 @@ export const getPageUrl = () => {
   return url.origin + url.pathname;
 };
 
-export const isWagmiMode = (crowdloanType) => {
-  let isWagmiPage = false;
-  if (typeof window === 'undefined') {
-    return false;
-  }
-
-  const url = new URL(window?.location?.href);
-  if (crowdloanType === CROWDLOAN_TYPE.KSM) {
-    isWagmiPage = url?.pathname === '/turing/wagmi' || url?.pathname === '/turing/wagmi/';
-  } else {
-    isWagmiPage = url?.pathname.startsWith('/oak/wagmi/');
-  }
-
-  return crowdloanType === CROWDLOAN_TYPE.KSM
-    ? isWagmiPage && getUrlSearchParam(url, 'password') === wagmiPassword
-    : isWagmiPage;
-};
-
-export const calculateCrowdloanState = (crowdloanBeginTime, crowdloanEndTime) => {
-  if (moment().isBefore(moment(crowdloanBeginTime))) {
-    return CROWDLOAN_STATE.PRELAUNCH;
-  }
-  if (moment().isBefore(moment(crowdloanEndTime))) {
-    return CROWDLOAN_STATE.LAUNCH;
-  }
-  return CROWDLOAN_STATE.ENDED;
-};
-
-export const getCrowdloanState = () => (isWagmiMode(CROWDLOAN_TYPE.KSM) ? CROWDLOAN_STATE.LAUNCH : calculateCrowdloanState(ksmBeginTime, ksmEndTime));
-
-export const getDotCrowdloanState = () => calculateCrowdloanState(dotBeginTime, dotEndTime);
-
-export const getCountdown = (crowdloanType = CROWDLOAN_TYPE.KSM) => {
-  const beginTime = crowdloanType === CROWDLOAN_TYPE.KSM ? ksmBeginTime : dotBeginTime;
-  const endTime = crowdloanType === CROWDLOAN_TYPE.KSM ? ksmEndTime : dotEndTime;
-  const currentState = crowdloanType === CROWDLOAN_TYPE.KSM ? getCrowdloanState() : getDotCrowdloanState();
-
-  let countdown = moment.duration(0);
-  if (currentState === CROWDLOAN_STATE.PRELAUNCH) {
-    countdown = moment.duration(moment(beginTime).diff(moment()));
-  } else if (currentState === CROWDLOAN_STATE.LAUNCH) {
-    countdown = moment.duration(moment(endTime).diff(moment()));
-  }
-
-  return {
-    days: Math.floor(countdown.asDays()),
-    hours: countdown.hours(),
-    minutes: countdown.minutes(),
-    seconds: countdown.seconds(),
-  };
-};
-
 export const handleEnterKeyPressed = async (event, handleFunc, options) => {
   if (event.key === 'Enter') {
     handleFunc([...options]);
   }
 };
-
-export const resendEmail = async (email) => {
-  try {
-    await Parse.User.requestEmailVerification(email);
-    openNotification(
-      i18n.t('common:join.notifications.email-resent.message'),
-      i18n.t('common:join.notifications.email-resent.description'),
-    );
-  } catch (error) {
-    if (error.code === Parse.Error.EMAIL_NOT_FOUND) {
-      openNotification(
-        i18n.t('common:join.notifications.email-not-found.message'),
-        i18n.t('common:join.notifications.email-not-found.description'),
-      );
-      return;
-    }
-    // We can't clearly know through the error information whether the failure is because the email has been verified.
-    if (error.code === -1) {
-      openNotification(
-        i18n.t('common:join.notifications.email-verified.message'),
-        i18n.t('common:join.notifications.email-verified.description'),
-      );
-      return;
-    }
-    openNetworkErrorNotification();
-  }
-};
-
-export const downloadData = (data, fileName, fileType) => {
-  // Create a blob with the data we want to download as a file
-  const blob = new Blob([data], { type: fileType });
-  // Create an anchor element and dispatch a click event on it
-  // to trigger a download
-  const anchorElement = document.createElement('a');
-  anchorElement.download = fileName;
-  anchorElement.href = window.URL.createObjectURL(blob);
-  const clickEvt = new MouseEvent('click', {
-    view: window,
-    bubbles: true,
-    cancelable: true,
-  });
-  anchorElement.dispatchEvent(clickEvt);
-  anchorElement.remove();
-};
-
-export const generateCsvData = (headers, data) => {
-  const headerRow = headers.join(',');
-  const dataRows = data.reduce((acc, row) => {
-    const rowData = _.map(row, (item) => `"${item}"`);
-    acc.push(rowData.join(','));
-    return acc;
-  }, []);
-  return [headerRow, ...dataRows].join('\n');
-};
-
-export const exportToCsv = (headers, data, fileName) => {
-  const csvData = generateCsvData(headers, data);
-  downloadData(csvData, fileName, 'text/csv');
-};
-
 export const numberFloor = (num, precision) => {
   const numStr = num.toString();
   const dotIndex = numStr.indexOf('.');

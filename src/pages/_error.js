@@ -1,7 +1,6 @@
 import React from 'react';
 import NextErrorComponent from 'next/error';
 import PropTypes from 'prop-types';
-import * as Sentry from '@sentry/nextjs';
 
 import { logError } from '../utils/log';
 
@@ -27,7 +26,7 @@ ErrorPage.getInitialProps = async (context) => {
   errorInitialProps.hasGetInitialPropsRun = true;
   errorInitialProps.namespacesRequired = ['header', 'footer'];
 
-  // Returning early because we don't want to log 404 errors to Sentry.
+  // Returning early because we don't want to log 404 errors
   if (res?.statusCode === 404) {
     return errorInitialProps;
   }
@@ -48,18 +47,13 @@ ErrorPage.getInitialProps = async (context) => {
   if (err) {
     logError('ErrorPage.getInitialProps', err);
 
-    // Flushing before returning is necessary if deploying to Vercel, see
-    // https://vercel.com/docs/platform/limits#streaming-responses
-    await Sentry.flush(2000);
-
     return errorInitialProps;
   }
 
   // If this point is reached, getInitialProps was called without any
   // information about what the error might be. This is unexpected and may
-  // indicate a bug introduced in Next.js, so record it in Sentry
+  // indicate a bug introduced in Next.js
   logError('ErrorPage.getInitialProps.missingData', new Error(`_error.js getInitialProps missing data at path: ${asPath}`));
-  await Sentry.flush(2000);
 
   return errorInitialProps;
 };

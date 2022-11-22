@@ -8,10 +8,6 @@ $button-hover-color: $purple;
 body {
   font-family: "GT Walsheim, sans-serif";
   font-size: 16px;
-  background-image: url(../assets/image/background.jpg);
-  background-position: 'center center';
-  background-size: 'cover';
-  background-repeat: 'no-repeat';
-  background-color: 'rgb(3; 4; 8)';
+  background: url(/src/assets/image/background.jpg) center center / cover no-repeat rgb(3, 4, 8);
   color: $white;
 }

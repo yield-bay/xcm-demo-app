@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import App from 'next/app';
 import PropTypes from 'prop-types';
-import Parse from 'parse';
 import 'moment/locale/zh-tw';
 
 import Layout from '../components/Layout';
@@ -17,12 +16,7 @@ import '@fortawesome/fontawesome-svg-core/styles.css';
 import '../scss/styles.scss';
 
 const { appWithTranslation } = nexti18N;
-const { serverURL, appId } = config.parse;
 
-if (typeof window !== 'undefined') {
-  Parse.serverURL = serverURL;
-  Parse.initialize(appId);
-}
 function MyApp({ Component, pageProps }) {
   return (
     <GlobalProvider>

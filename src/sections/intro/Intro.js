@@ -43,7 +43,7 @@ function Intro({ t }) {
   const { isMobile } = gContext;
 
   return (
-    <Container style={{ height: '100vh' }}>
+    <>
       <Row justify="center">
         <Col>
           <PromotedBox>
@@ -55,17 +55,18 @@ function Intro({ t }) {
       <Row justify="center">
         <Col>
           <SwapBox>
-          <Row >
-            Swap  Pool
-
-            <div><p>
-            On top of rewards, you will earn fees from trades proportional to your share of the pool. The fee is variable and depends on the amount of the trade.
-            </p></div>
-          </Row>
+            <Row>
+              Swap  Pool
+              <div>
+                <p>
+                  On top of rewards, you will earn fees from trades proportional to your share of the pool. The fee is variable and depends on the amount of the trade.
+                </p>
+              </div>
+            </Row>
           </SwapBox>
         </Col>
       </Row>
-    </Container>
+    </>
   );
 }
 

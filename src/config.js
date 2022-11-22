@@ -73,10 +73,6 @@ const config = {
     extrinsicQuery: '/extrinsic/',
     accountQuery: '/account/',
   },
-  parse: {
-    serverURL: process.env.NEXT_PUBLIC_PARSE_SERVERURL,
-    appId: process.env.NEXT_PUBLIC_PARSE_APPID,
-  }
 };
 
 export default config;

@@ -1,10 +1,9 @@
 import React, {
-  useState, useEffect, useContext, useRef,
+  useState, useEffect, useContext,
 } from 'react';
 import Head from 'next/head';
 import PropTypes from 'prop-types';
 import styled, { ThemeProvider } from 'styled-components';
-import AOS from 'aos';
 import _, { get, merge } from 'lodash';
 import { useRouter } from 'next/router';
 
@@ -13,8 +12,6 @@ import config from '../../config';
 // import Footer from '../Oak/Footer';
 
 import GlobalContext, { SCREEN_WIDTH_MODE } from '../../context/GlobalContext';
-
-import GlobalStyle from '../../utils/globalStyle';
 
 // the full theme object
 import { theme as baseTheme } from '../../utils';
@@ -39,7 +36,6 @@ const Loader = styled.div`
 const SiteWrapper = styled.div`
   position: relative;
   overflow: hidden !important;
-  background-color: ${(props) => (props.isDark ? '#1F1F24' : '#FCFCFC')};
 `;
 
 // options for different color modes
@@ -91,7 +87,6 @@ function Layout({ children }) {
   const isRedirect = !_.isEmpty(redirectUrl);
 
   useEffect(() => {
-    AOS.init({ once: true });
     setVisibleLoader(false);
   }, []);
 
@@ -107,9 +102,6 @@ function Layout({ children }) {
     window.addEventListener('resize', handleResize);
     handleResize();
   }, [setIsMobile, setScreenWidthMode]);
-
-  // Navbar style based on scroll
-  const eleRef = useRef();
 
   useEffect(() => {
     window.addEventListener(
@@ -144,25 +136,13 @@ function Layout({ children }) {
   );
 
   return (
-    <ThemeProvider
-      theme={
-        gContext.themeDark ? getTheme(modes.dark) : getTheme(modes.light)
-      }
-    >
-      <div data-theme-mode-panel-active data-theme={gContext.themeDark ? 'dark' : 'light'}>
-        <GlobalStyle />
-        {headers}
-        { !isRedirect && (
-          <>
-            <Loader id="loading" className={visibleLoader ? '' : 'inActive'} />
-            <SiteWrapper isDark={gContext.themeDark} ref={eleRef}>
-              {children}
-            </SiteWrapper>
-          </>
-        ) }
-
-      </div>
-    </ThemeProvider>
+    <div>
+      {headers}
+      {/* <Loader id="loading" className={visibleLoader ? '' : 'inActive'} /> */}
+      <SiteWrapper>
+        {children}
+      </SiteWrapper>
+    </div>
   );
 }
 

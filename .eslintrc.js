@@ -15,7 +15,7 @@ module.exports = {
     'react',
   ],
   rules: {
-    'max-len': ['error', { code: 250 }],
+    'max-len': ['error', { code: 500 }],
     'import/no-unresolved': 'off',
     'import/extensions': ['error', 'never', { svg: 'always', png: 'always' }],
     'react/jsx-filename-extension': 'off',

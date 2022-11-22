@@ -1,16 +1,10 @@
 /* eslint-disable no-console */
-import Parse from 'parse';
 import util from 'util';
 import moment from 'moment';
-import * as Sentry from '@sentry/nextjs';
 
 import config from '../config';
 import FetchError from './errors/FetchError';
 
-/**
- * The log tool refers to webapp-parse-backend:
- * https://github.com/OAK-Foundation/webapp-parse-backend/blob/9c4bd3c5d7f9ee8b6d10feac9fdd11a904356695/src/components/utils/utils.js#L192
- */
 const { env } = config;
 
 const LOG_LEVEL = {
@@ -63,22 +57,6 @@ export function logWarn(...args) {
   console.warn(formatMessage(args));
 }
 
-function captureException(error) {
-  if (env === 'development') {
-    return;
-  }
-
-  const level = Sentry.Severity.Info;
-
-  if (error instanceof FetchError) {
-    Sentry.captureException(error, { tags: { 'fetch.url': error.url, level } });
-  } else if (error instanceof Parse.Error) {
-    Sentry.captureException(error, { tags: { 'parse.func': error.cloudFunc, level } });
-  } else {
-    Sentry.captureException(error, { level });
-  }
-}
-
 export function logError(...args) {
   if (logLevel < LOG_LEVEL.ERROR) {
     return;
@@ -86,11 +64,9 @@ export function logError(...args) {
 
   const formattedArgs = args;
   if (formattedArgs[1] instanceof Error) {
-    captureException(formattedArgs[1]);
     formattedArgs[1] = formatError(formattedArgs[1]);
   }
   if (formattedArgs[2] instanceof Error) {
-    captureException(formattedArgs[2]);
     formattedArgs[2] = formatError(formattedArgs[2]);
   }
 
