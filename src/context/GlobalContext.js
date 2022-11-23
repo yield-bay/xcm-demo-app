@@ -4,9 +4,9 @@ import React, {
 import _ from 'lodash';
 import PropTypes from 'prop-types';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
-import turingHelper from "../utils/turingHelper";
-import mangataHelper from "../utils/mangataHelper";
-import Account from "../utils/account";
+import turingHelper from '../utils/turingHelper';
+import mangataHelper from '../utils/mangataHelper';
+import Account from '../utils/account';
 
 const GlobalContext = React.createContext();
 
@@ -35,20 +35,20 @@ export function GlobalProvider({ children }) {
   });
 
   const [alice, setAlice] = useState(async () => {
-    await cryptoWaitReady();
+    // await cryptoWaitReady();
 
-    console.log('Initializing APIs of both chains ...');
-    await turingHelper.initialize();
-    await mangataHelper.initialize();
+    // console.log('Initializing APIs of both chains ...');
+    // await turingHelper.initialize();
+    // await mangataHelper.initialize();
 
-    console.log('Reading token and balance of Alice and Bob accounts ...');
-    const account = new Account('Alice');
-    await account.init();
-    account.print();
-    const mangataAddress = alice.assets[1].address;
-    const turingAddress = alice.assets[2].address;
+    // console.log('Reading token and balance of Alice and Bob accounts ...');
+    // const account = new Account('Alice');
+    // await account.init();
+    // account.print();
+    // const mangataAddress = alice.assets[1].address;
+    // const turingAddress = alice.assets[2].address;
 
-    return mangataAddress;
+    // return mangataAddress;
   });
 
   const toggleModal = useCallback(() => setIsModalVisible(!isModalVisible), [isModalVisible]);
