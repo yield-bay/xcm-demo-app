@@ -90,21 +90,24 @@ class TuringHelper {
     });
   };
 
-  sendXcmExtrinsic = async (xcmpCall, keyPair, taskId) => new Promise(async (resolve) => {
-    const unsub = await xcmpCall.signAndSend(keyPair, { nonce: -1 }, async ({ status }) => {
-      if (status.isInBlock) {
-        console.log(`Successful with hash ${status.asInBlock.toHex()}`);
-
-        // Get Task
-        const task = await this.api.query.automationTime.accountTasks(keyPair.address, taskId);
-        console.log('Task:', task.toHuman());
-
-        unsub();
-        resolve();
-      } else {
+  sendXcmExtrinsic = async (xcmpCall, keyPair, taskId) => new Promise((resolve) => {
+    const send = async () => {
+      const unsub = await xcmpCall.signAndSend(keyPair, { nonce: -1 }, async ({ status }) => {
         console.log(`Status: ${status.type}`);
-      }
-    });
+        if (status.isInBlock) {
+          console.log(`Successful with hash ${status.asInBlock.toHex()}`);
+
+          // Get Task
+          const task = await this.api.query.automationTime.accountTasks(keyPair.address, taskId);
+          console.log('Task:', task.toHuman());
+
+          unsub();
+          resolve(status.asInBlock.toHex());
+        }
+      });
+    };
+
+    send();
   });
 }
 

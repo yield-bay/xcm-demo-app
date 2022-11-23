@@ -1,8 +1,8 @@
 import {
   Image, Button,
 } from 'antd';
-import React, { useContext, useEffect, useState } from 'react';
-import { borderRight } from 'styled-system';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
+// import { borderRight } from 'styled-system';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 import BN from 'bn.js';
 
@@ -11,18 +11,17 @@ import Intro from '../sections/intro';
 import turingHelper from '../utils/turingHelper';
 import mangataHelper from '../utils/mangataHelper';
 import Account from '../utils/account';
+import GlobalContext from '../context/GlobalContext';
 
 import imgPolkadot from '../assets/image/polkadot.svg';
 import imgMgx from '../assets/image/mgx.svg';
 import imgTur from '../assets/image/tur.png';
 import imgXlogo from '../assets/image/x-logo.svg';
 
-import config from '../config';
+import { env, tokenConfig } from '../utils/constants';
 
-const { turing, mangata } = config;
-
-const TUR_DECIMAL = '1000000000000';
-const MGR_DECIMAL = '1000000000000000000';
+const { MANGATA_ENDPOINT, TURING_ENDPOINT } = env;
+const { MGR: { decimal: MGR_DECIMAL }, TUR: { decimal: TUR_DECIMAL } } = tokenConfig;
 
 const Container = styled.div`
   padding: 2rem 0;
@@ -39,8 +38,9 @@ const Col = styled.div`
 `;
 
 function HomeV2() {
-  // const {} = useContext(GlobalContext);
-  const [alice, setAlice] = useState(null);
+  const gContext = useContext(GlobalContext);
+  const { alice, setAlice } = gContext;
+
   const [turBalance, setTurBalance] = useState(null);
   const [mgrBalance, setMgrBalance] = useState(null);
   const [liquidityTokenBalance, setliquidityTokenBalance] = useState(null);
@@ -50,8 +50,8 @@ function HomeV2() {
       await cryptoWaitReady();
 
       console.log('Initializing APIs of both chains ...');
-      await turingHelper.initialize(turing.endpoint);
-      await mangataHelper.initialize(mangata.endpoint);
+      await turingHelper.initialize(TURING_ENDPOINT);
+      await mangataHelper.initialize(MANGATA_ENDPOINT);
 
       console.log('Reading token and balance of Alice and Bob accounts ...');
       const account = new Account('Alice');
@@ -62,25 +62,31 @@ function HomeV2() {
     };
 
     initialize();
-  }, []);
+  }, [setAlice]);
+
+  const updateBalances = async (account) => {
+    if (!account) {
+      return;
+    }
+    const mangataAddress = account.assets[1].address;
+    setTurBalance(await mangataHelper.getBalance('TUR', mangataAddress));
+    setMgrBalance(await mangataHelper.getBalance('MGR', mangataAddress));
+    setliquidityTokenBalance(await mangataHelper.getBalance('MGR-TUR', mangataAddress));
+  };
+
+  const startUpdateBalances = useCallback(() => {
+    setInterval(() => {
+      updateBalances(alice);
+    }, 1000);
+  }, [alice]);
 
   useEffect(() => {
-    const getBalances = async () => {
-      if (!alice) {
-        return;
-      }
-      const mangataAddress = alice.assets[1].address;
-      setTurBalance(await mangataHelper.getBalance('TUR', mangataAddress));
-      setMgrBalance(await mangataHelper.getBalance('MGR', mangataAddress));
-      setliquidityTokenBalance(await mangataHelper.getBalance('MGR-TUR', mangataAddress));
-    };
-
-    getBalances();
-  }, [alice]);
+    startUpdateBalances();
+  }, [startUpdateBalances]);
 
   const turFreeBalance = turBalance ? turBalance.free.div(new BN(TUR_DECIMAL)).toString() : 0;
   const mgrFreeBalance = mgrBalance ? mgrBalance.free.div(new BN(MGR_DECIMAL)).toString() : 0;
-  const liquidityTokenFreeBalance = liquidityTokenBalance ? liquidityTokenBalance.free.div(new BN(MGR_DECIMAL)).toString() : 0;
+  const liquidityTokenFreeBalance = liquidityTokenBalance ? liquidityTokenBalance.reserved.div(new BN(MGR_DECIMAL)).toString() : 0;
 
   return (
     <div className="layout">

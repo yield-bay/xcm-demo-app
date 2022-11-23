@@ -1,19 +1,28 @@
 import React, { useContext, useState } from 'react';
 import _ from 'lodash';
 import {
-  Row, Col, Button, Image, Tabs, Form, Input, Select, Switch, Slider, Modal, Steps, message,
+  Row, Col, Button, Image, Tabs, Form, Input, Select, Switch, Slider, Modal, Steps, message, Spin,
 } from 'antd';
 import { InfoCircleOutlined } from '@ant-design/icons';
+import BN from 'bn.js';
 
 import PropTypes from 'prop-types';
 
 import styled from 'styled-components';
 import nexti18N from '../../../i18n';
 import GlobalContext from '../../context/GlobalContext';
-import imgMgx from '../../assets/image/mgx.svg';
-import imgTur from '../../assets/image/tur.png';
-import imgKsm from '../../assets/image/ksm.svg';
+import turingHelper from '../../utils/turingHelper';
+import mangataHelper from '../../utils/mangataHelper';
+import { env, tokenConfig } from '../../utils/constants';
+import { delay, formatNumberThousands } from '../../utils/utils';
 import LiquidityToken from '../../components/LiquidityToken';
+
+import imgMgx from '../../assets/image/mgx.svg';
+// import imgTur from '../../assets/image/tur.png';
+// import imgKsm from '../../assets/image/ksm.svg';
+
+const { TURING_ENDPOINT, MANGATA_ENDPOINT, MANGATA_PARA_ID } = env;
+const { MGR: { decimal: MGR_DECIMAL }, TUR: { decimal: TUR_DECIMAL } } = tokenConfig;
 
 const { Option } = Select;
 
@@ -69,11 +78,131 @@ const tailLayout = {
 
 function Intro({ t }) {
   const gContext = useContext(GlobalContext);
+  const { alice } = gContext;
   // const { isModalVisible, setIsModalVisible } = gContext;
   const [open, setOpen] = useState(false);
   const [current, setCurrent] = useState(0);
   const [step1Confirm, setStep1Confirm] = useState(false);
   const [step2Confirm, setStep2Confirm] = useState(false);
+  const [isLoading, setLoading] = useState(false);
+  const [compoundTxHash, setCompoundTxHash] = useState(null);
+  const [liquidityIncrement, setLiquidityIncrement] = useState(new BN(0));
+
+  const [compoundFrequency, setCompoundFrequency] = useState(new BN(0));
+
+  const [compoundPercentage, setCompoundPercentage] = useState(new BN(0));
+  const [autoCompoundEnabled, setAutoCompoundEnabled] = useState(new BN(0));
+
+  const listenEvents = async (api) => new Promise((resolve) => {
+    const listenSystemEvents = async () => {
+      const unsub = await api.query.system.events((events) => {
+        let foundEvent = false;
+        // Loop through the Vec<EventRecord>
+        events.forEach((record) => {
+          // Extract the phase, event and the event types
+          const { event, phase } = record;
+          const { section, method, typeDef: types } = event;
+
+          // console.log('section.method: ', `${section}.${method}`);
+          if (section === 'proxy' && method === 'ProxyExecuted') {
+            foundEvent = true;
+            // Show what we are busy with
+            console.log(`\t${section}:${method}:: (phase=${phase.toString()})`);
+            // console.log(`\t\t${event.meta.documentation.toString()}`);
+
+            // Loop through each of the parameters, displaying the type and data
+            event.data.forEach((data, index) => {
+              console.log(`\t\t\t${types[index].type}: ${data.toString()}`);
+            });
+          }
+        });
+
+        if (foundEvent) {
+          unsub();
+          resolve();
+        }
+      });
+    };
+
+    listenSystemEvents().catch(console.error);
+  });
+
+  const onRequestAutoCompound = async () => {
+    setLoading(true);
+    console.log('Initializing APIs of both chains ...');
+
+    await turingHelper.initialize(TURING_ENDPOINT);
+    await mangataHelper.initialize(MANGATA_ENDPOINT);
+
+    const mangataAddress = alice.assets[1].address;
+    const turingAddress = alice.assets[2].address;
+
+    const { reserved: oldLiquidityBalance } = await mangataHelper.getBalance('MGR-TUR', mangataAddress);
+
+    const lquidityToken = 'MGR-TUR';
+    console.log(`Checking how much reward available in ${lquidityToken} pool ...`);
+    const rewardAmount = await mangataHelper.calculateRewardsAmount(mangataAddress, lquidityToken);
+    console.log(`Claimable reward in ${lquidityToken}: `, rewardAmount);
+
+    const liquidityBalance = await mangataHelper.getBalance('MGR-TUR', mangataAddress);
+    // const free = liquidityBalance.free.div(new BN('1000000000000000000'));
+    const reserved = liquidityBalance.reserved.div(new BN('1000000000000000000'));
+
+    console.log(`Before auto-compound, Alice’s reserved "MGR-TUR": ${formatNumberThousands(reserved.toNumber())} ...`);
+
+    console.log('\nStart to schedule an auto-compound call via XCM ...');
+    const liquidityTokenId = mangataHelper.getTokenIdBySymbol('MGR-TUR');
+    const proxyExtrinsic = mangataHelper.api.tx.xyk.compoundRewards(liquidityTokenId, 100);
+    const mangataProxyCall = await mangataHelper.createProxyCall(mangataAddress, proxyExtrinsic);
+    const encodedMangataProxyCall = mangataProxyCall.method.toHex(mangataProxyCall);
+    const mangataProxyCallFees = await mangataProxyCall.paymentInfo(mangataAddress);
+
+    console.log('encodedMangataProxyCall: ', encodedMangataProxyCall);
+    console.log('mangataProxyCallFees: ', mangataProxyCallFees.toHuman());
+
+    console.log('\n1. Create the call for scheduleXcmpTask ');
+    const providedId = `xcmp_automation_test_${(Math.random() + 1).toString(36).substring(7)}`;
+    const xcmpCall = turingHelper.api.tx.automationTime.scheduleXcmpTask(
+      providedId,
+      { Fixed: { executionTimes: [0] } },
+      MANGATA_PARA_ID,
+      0,
+      encodedMangataProxyCall,
+      mangataProxyCallFees.weight,
+    );
+
+    console.log('xcmpCall: ', xcmpCall);
+
+    console.log('\n2. Estimating XCM fees ...');
+    const xcmFrees = await turingHelper.getXcmFees(turingAddress, xcmpCall);
+    console.log('xcmFrees:', xcmFrees.toHuman());
+
+    // Get a TaskId from Turing rpc
+    const taskId = await turingHelper.api.rpc.automationTime.generateTaskId(turingAddress, providedId);
+    console.log('TaskId:', taskId.toHuman());
+
+    console.log('\n3. Sign and send scheduleXcmpTask call ...');
+    const txHash = await turingHelper.sendXcmExtrinsic(xcmpCall, alice.keyring, taskId);
+
+    console.log('\nWaiting 20 seconds before reading new chain states ...');
+
+    // TODO: how do we know the task happens? Could we stream reading events on Mangata side?
+    // console.log(`\n4. waiting for XCM events on Mangata side ...`);
+
+    await listenEvents(mangataHelper.api);
+    await delay(20000);
+
+    const { reserved: newLiquidityBalance } = await mangataHelper.getBalance('MGR-TUR', mangataAddress);
+
+    console.log('oldLiquidityBalance:', oldLiquidityBalance.toString());
+    console.log('newLiquidityBalance:', newLiquidityBalance.toString());
+
+    const increment = newLiquidityBalance.sub(oldLiquidityBalance).div(new BN(MGR_DECIMAL));
+    setLiquidityIncrement(increment);
+    setCompoundTxHash(txHash);
+    setLoading(false);
+    setStep2Confirm(true);
+  };
 
   const tokenRow = (
     <div className="border width-100 margin-bottom-12 padding-top-12 padding-bottom-12">
@@ -162,8 +291,41 @@ function Intro({ t }) {
     }
   };
 
+  const getCompoundPercentage = (sliderValue) => {
+    if (sliderValue < 33) {
+      return 25;
+    } if (sliderValue < 66) {
+      return 50;
+    } if (sliderValue < 99) {
+      return 75;
+    }
+    return 100;
+  };
+
+  const getCompoundFrequency = (sliderValue) => {
+    if (sliderValue < 33) {
+      return 7;
+    } if (sliderValue < 66) {
+      return 5;
+    } if (sliderValue < 99) {
+      return 3;
+    }
+    return 1;
+  };
+
   const onFinish = (values) => {
     console.log(values);
+    const { sliderFrequency, sliderPercentage, autoCompoundSwitch } = values;
+    const compoundFrequencyValue = getCompoundFrequency(sliderFrequency);
+    const compoundPercentageValue = getCompoundPercentage(sliderPercentage);
+
+    setCompoundFrequency(compoundFrequencyValue);
+    setCompoundPercentage(compoundPercentageValue);
+    setAutoCompoundEnabled(autoCompoundSwitch);
+
+    setCurrent(0);
+    setStep1Confirm(false);
+    setStep2Confirm(false);
     setOpen(true);
   };
 
@@ -172,7 +334,9 @@ function Intro({ t }) {
   };
 
   const onStep2ConfirmClicked = () => {
-    setStep2Confirm(true);
+    // console.log('onStep2ConfirmClicked');
+    // setStep2Confirm(true);
+    onRequestAutoCompound();
   };
 
   const onModalCancelClicked = () => {
@@ -219,6 +383,8 @@ function Intro({ t }) {
         <>
           <Row className="modal-row">
             <Col span={24}>Transaction Hash: </Col>
+            <Col span={24}>{compoundTxHash}</Col>
+            <Col span={24}>{`Lquidity Token Increment: ${formatNumberThousands(liquidityIncrement.toNumber())} MGR-TUR`}</Col>
           </Row>
           <Row justify="center" gutter={24}>
             <Col span={6}><Button type="primary" onClick={onModalCancelClicked} style={{ width: '100%' }}>Complete</Button></Col>
@@ -229,8 +395,8 @@ function Intro({ t }) {
           <Row className="modal-row">
             <Col span={24} className="modal-row-title">Setting up your compound task</Col>
             <Col span={24}>Composing task registration on Turing Network</Col>
-            <Col span={24}>Frequency: Every Day</Col>
-            <Col span={24}>Percertage: 100%</Col>
+            <Col span={24}>{`Frequency: ${compoundFrequency} Day`}</Col>
+            <Col span={24}>{`Percertage: ${compoundPercentage}%`}</Col>
             <Col span={24}>Expiration: good till cancel</Col>
           </Row>
           <Row justify="center" gutter={24}>
@@ -260,7 +426,9 @@ function Intro({ t }) {
         name="control-ref"
         onFinish={onFinish}
         style={{ width: '80%', margin: '24px auto' }}
-        initialValues={{ select: 'select-mgx-tur' }}
+        initialValues={{
+          select: 'select-mgx-tur', sliderPercentage: 0, sliderFrequency: 0, autoCompoundSwitch: false,
+        }}
       >
         <Form.Item
           name="select"
@@ -288,7 +456,7 @@ function Intro({ t }) {
             </Option>
           </Select>
         </Form.Item>
-        <Form.Item name="slider-frequency" label="Frequency" tooltip="This is a required field">
+        <Form.Item name="sliderFrequency" label="Frequency" tooltip="This is a required field">
           <Slider
             step={33}
             marks={{
@@ -300,7 +468,7 @@ function Intro({ t }) {
           />
         </Form.Item>
         <Form.Item
-          name="slider-percentage"
+          name="sliderPercentage"
           label="Percentage of Claimed Reward"
           tooltip={{ title: 'Tooltip with customize icon', icon: <InfoCircleOutlined /> }}
 
@@ -317,9 +485,9 @@ function Intro({ t }) {
         </Form.Item>
         <Form.Item
           label="Auto-compound"
+          name="autoCompoundSwitch"
           valuePropName="checked"
           tooltip={{ title: 'Tooltip with customize icon', icon: <InfoCircleOutlined /> }}
-
         >
           <Switch />
         </Form.Item>
@@ -333,9 +501,10 @@ function Intro({ t }) {
         centered
         open={open}
         onCancel={onModalCancelClicked}
-        closable
+        closable={isLoading}
         footer={null}
         width={800}
+        className="steps-modal"
       >
         <Steps
           type="navigation"
@@ -346,6 +515,11 @@ function Intro({ t }) {
           items={items}
         />
         <div className="steps-content">{steps[current].content}</div>
+        {isLoading && (
+          <div className="loading-layer">
+            <Spin size="large" />
+          </div>
+        )}
       </Modal>
     </Row>
   );

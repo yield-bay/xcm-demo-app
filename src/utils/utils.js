@@ -2,7 +2,7 @@ import _ from 'lodash';
 
 export const sendExtrinsic = async (api, extrinsic, keyPair, { isSudo = false } = {}) => new Promise((resolve) => {
   const newExtrinsic = isSudo ? api.tx.sudo.sudo(extrinsic) : extrinsic;
-  newExtrinsic.signAndSend(keyPair, { nonce: -1 }, ({ status, events, dispatchError }) => {
+  newExtrinsic.signAndSend(keyPair, { nonce: -1 }, ({ status, events }) => {
     console.log('status.type', status.type);
 
     if (status.isInBlock || status.isFinalized) {
@@ -11,7 +11,7 @@ export const sendExtrinsic = async (api, extrinsic, keyPair, { isSudo = false } 
         .filter(({ event }) => api.events.system.ExtrinsicFailed.is(event))
       // we know that data for system.ExtrinsicFailed is
       // (DispatchError, DispatchInfo)
-        .forEach(({ event: { data: [error, info] } }) => {
+        .forEach(({ event: { data: [error] } }) => {
           if (error.isModule) {
             // for module errors, we have the section indexed, lookup
             const decoded = api.registry.findMetaError(error.asModule);
@@ -24,7 +24,7 @@ export const sendExtrinsic = async (api, extrinsic, keyPair, { isSudo = false } 
         });
 
       if (status.isFinalized) {
-        return resolve(status.asFinalized.toString());
+        resolve(status.asFinalized.toString());
       }
     }
   });
@@ -33,9 +33,9 @@ export const sendExtrinsic = async (api, extrinsic, keyPair, { isSudo = false } 
 /**
 * Usage: await delay(1000)
 * @param  {[type]} ms) [description]
-* @return {[type]}     [description]
+* @return {Promise}     [description]
 */
-export const delay = (ms) => new Promise((res) => setTimeout(res, ms));
+export const delay = async (ms) => new Promise((res) => { setTimeout(res, ms); });
 
 // @usage: await waitForEvent(mangataHelper.api, "xyk.LiquidityMinted");
 // This is a utility function copied from https://github.com/mangata-finance/mangata-e2e/pull/166/files
@@ -54,12 +54,12 @@ export const waitForEvent = async (api, method, blocks = 3) => new Promise((reso
   let counter = 0;
   const unsub = api.rpc.chain.getFinalizedHead(async (head) => {
     await api.query.system.events((events) => {
-      counter++;
+      counter += 1;
       console.log(`await event check for '${method}', attempt ${counter}, head ${head}`);
-      events.forEach(({ phase, event: { data, method, section } }) => {
-        console.log(phase, data, method, section);
+      events.forEach(({ phase, event: { data, method: methodInEvent, section } }) => {
+        console.log(phase, data, methodInEvent, section);
       });
-      const event = _.find(events, ({ event }) => `${event.section}.${event.method}` === method);
+      const event = _.find(events, ({ eventItem }) => `${eventItem.section}.${eventItem.method}` === method);
       if (event) {
         resolve();
         unsub();
@@ -67,7 +67,7 @@ export const waitForEvent = async (api, method, blocks = 3) => new Promise((reso
         //   reject(new Error("event not found"));
       }
       if (counter === blocks) {
-        reject(`method ${method} not found within blocks limit`);
+        reject(new Error(`method ${method} not found within blocks limit`));
       }
     });
   });
