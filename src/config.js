@@ -1,11 +1,8 @@
 import {
-  faWeixin, faTwitter, faLinkedinIn, faDiscord, faTelegramPlane, faMediumM, faYoutube, faGithubAlt,
+  faTwitter, faLinkedinIn, faDiscord, faTelegramPlane, faMediumM, faYoutube, faGithubAlt,
 } from '@fortawesome/free-brands-svg-icons';
 import { faEnvelopeSquare } from '@fortawesome/pro-solid-svg-icons';
 
-const relayChainEndpoint = process.env.NEXT_PUBLIC_RELAYCHAIN_ENDPINT;
-const relayChainExplorerUrl = process.env.NEXT_PUBLIC_RELAYCHAIN_SUBSCAN || `https://polkadot.js.org/apps/?rpc=${encodeURIComponent(relayChainEndpoint)}#`;
-const explorerQuery = process.env.NEXT_PUBLIC_RELAYCHAIN_SUBSCAN ? '/block/' : '/explorer/query/';
 
 const config = {
   company: 'OAK Network',
@@ -67,12 +64,6 @@ const config = {
   github: 'https://github.com/OAK-Foundation',
   mediaKit: 'https://drive.google.com/drive/folders/1mXBPPQGe0fYBOEMM03uM-DFCqZn9rz_W',
   polkadotBrowserExtension: 'https://polkadot.js.org/extension/',
-  explorer: {
-    baseUrl: relayChainExplorerUrl,
-    query: explorerQuery,
-    extrinsicQuery: '/extrinsic/',
-    accountQuery: '/account/',
-  },
 };
 
 export default config;

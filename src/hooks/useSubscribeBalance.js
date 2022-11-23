@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { dotHelper } from '../utils/polkadotHelper';
+import mangataHelper from '../utils/mangataHelper';
 
 function useSubscribeBalance() {
   const [unsub, setUnsub] = useState(null);
@@ -11,7 +11,7 @@ function useSubscribeBalance() {
     }
   }, [unsub]);
 
-  const subscribe = async (address) => setUnsub(await dotHelper.getApi().query.system.account(address, ({ data: newBalance }) => setBalance(newBalance)));
+  const subscribe = async (address) => setUnsub(await mangataHelper.api.query.system.account(address, ({ data: newBalance }) => setBalance(newBalance)));
 
   return { balance, subscribe };
 }

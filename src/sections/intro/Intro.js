@@ -51,13 +51,13 @@ function Intro({ t }) {
   const { isMobile } = gContext;
 
   const tokenRow = (
-    <div className="border width-100 margin-bottom-12">
-      <div className="flex flex-right">
-        <div className="flex-grow-10">Token</div>
-        <div className="flex-grow-1">Balance: 0</div>
+    <div className="border width-100 margin-bottom-12 padding-top-12 padding-bottom-12">
+      <div className="flex flex-right margin-left-12">
+        <div className="flex-grow-10 text-grey margin-bottom-12">Token</div>
+        <div className="flex-grow-1  text-grey ">Balance: 0</div>
         <div className="flex-grow-1">MAX</div>
       </div>
-      <div className="flex flex-right">
+      <div className="flex flex-right margin-left-12">
         <div className="flex-grow-1"><Image className="" src={imgMgx} alt="MGX Token Icon" width={24} height={24} /></div>
         <div className="flex-grow-10">MGX</div>
         <div className="flex-grow-1">0.0</div>
@@ -86,7 +86,7 @@ function Intro({ t }) {
               <div className="flex-break" />
               <div className="flex flex-column width-100">
                 {tokenRow}
-                <div className="margin-bottom-12">+</div>
+                <div className="margin-bottom-12 margin-left-12">+</div>
                 {tokenRow}
               </div>
               <div className="flex flex-right width-100 margin-bottom-12">
