@@ -64,6 +64,14 @@ const config = {
   github: 'https://github.com/OAK-Foundation',
   mediaKit: 'https://drive.google.com/drive/folders/1mXBPPQGe0fYBOEMM03uM-DFCqZn9rz_W',
   polkadotBrowserExtension: 'https://polkadot.js.org/extension/',
+  turing: {
+    endpoint: process.env.NEXT_PUBLIC_TURING_ENDPOINT,
+    parachainId: process.env.NEXT_PUBLIC_TURING_PARA_ID,
+  },
+  mangata: {
+    endpoint: process.env.NEXT_PUBLIC_MANGATA_ENDPOINT,
+    parachainId: process.env.NEXT_PUBLIC_MANGATA_PARA_ID,
+  },
 };
 
 export default config;
