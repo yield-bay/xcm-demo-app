@@ -2,10 +2,15 @@ import React, { useEffect } from 'react';
 import App from 'next/app';
 import PropTypes from 'prop-types';
 import 'moment/locale/zh-tw';
+import {
+  ConfigProvider,
+} from 'antd';
 
 import localFont from '@next/font/local';
 import { Inter } from '@next/font/google';
 
+import { transparentize } from 'polished';
+import { withTheme } from 'styled-components';
 import Layout from '../components/Layout';
 import { GlobalProvider } from '../context/GlobalContext';
 import nexti18N from '../../i18n';
@@ -49,9 +54,23 @@ const { appWithTranslation } = nexti18N;
 function MyApp({ Component, pageProps }) {
   return (
     <GlobalProvider>
-      <Layout pageContext={{}} className={myFont.className}>
-        <Component {...pageProps} />
-      </Layout>
+      <ConfigProvider
+        theme={{
+          token: {
+            colorPrimary: 'rgb(122, 234, 215)',
+            colorTextBase: 'white',
+            colorBgBase: 'black',
+            radiusBase: 3,
+            colorBorder: 'grey',
+            // colorPrimaryActive: 'transparent',
+            colorBorderSecondary:'grey',
+          },
+        }}
+      >
+        <Layout pageContext={{}} className={myFont.className}>
+          <Component {...pageProps} />
+        </Layout>
+      </ConfigProvider>
     </GlobalProvider>
   );
 }

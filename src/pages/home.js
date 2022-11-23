@@ -104,8 +104,8 @@ function HomeV2() {
             </div>
           </div>
           <Row className="border-bottom">
-            <Button className="flex-grow-1" style={{ marginRight: 12 }}>DEPOSIT</Button>
-            <Button className="flex-grow-1">WITHDRAW</Button>
+            <Button className="flex-grow-1" type="default" style={{ marginRight: 12 }}>DEPOSIT</Button>
+            <Button className="flex-grow-1" type="default">WITHDRAW</Button>
           </Row>
           <Row className="border-bottom">
             <div style={{ marginBottom: 18 }}>
@@ -116,8 +116,8 @@ function HomeV2() {
               <div className="flex-grow-10" color="textPrimary" fontSize="14" fontWeight="400" letterSpacing="0.5">
                 <div className="flex">
                   <div>
-                    <Image className="" src={imgMgx} alt="MGX Token Icon" width={24} height={24} />
-                    <Image className="" src={imgTur} alt="TUR Token Icon" width={24} height={24} />
+                    <Image src={imgMgx} alt="MGX Token Icon" width={24} height={24} />
+                    <Image src={imgTur} alt="TUR Token Icon" width={24} height={24} />
                   </div>
                   <div>MGX&nbsp;/&nbsp;TUR</div>
                 </div>
@@ -140,12 +140,12 @@ function HomeV2() {
             <div className="flex-break" />
             <div className="width-100">
               <div className="flex margin-bottom-24 width-100">
-                <div className="margin-right-12 flex-grow-1"><Image className="" src={imgMgx} alt="MGX Token Icon" width={24} height={24} /></div>
+                <div className="margin-right-12 flex-grow-1"><Image src={imgMgx} alt="MGX Token Icon" width={24} height={24} /></div>
                 <div className="flex-grow-10" style={{ lineHeight: '24px' }}>MGR</div>
                 <div className="flex-grow-1" style={{ lineHeight: '24px' }}>{mgrFreeBalance}</div>
               </div>
               <div className="flex width-100">
-                <div className="margin-right-12 flex-grow-1"><Image className="" src={imgTur} alt="TUR Token Icon" width={24} height={24} /></div>
+                <div className="margin-right-12 flex-grow-1"><Image src={imgTur} alt="TUR Token Icon" width={24} height={24} /></div>
                 <div className="flex-grow-10" style={{ lineHeight: '24px' }}>TUR</div>
                 <div className="flex-grow-1" style={{ lineHeight: '24px' }}>{turFreeBalance}</div>
               </div>
