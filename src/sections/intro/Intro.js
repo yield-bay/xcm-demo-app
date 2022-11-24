@@ -458,6 +458,7 @@ function Intro({ t }) {
         </Form.Item>
         <Form.Item name="sliderFrequency" label="Frequency" tooltip="This is a required field">
           <Slider
+            tooltip={{ formatter: null }}
             step={33}
             marks={{
               0: 'Every 7 day',
@@ -474,6 +475,7 @@ function Intro({ t }) {
 
         >
           <Slider
+            tooltip={{ formatter: null }}
             step={33}
             marks={{
               0: '25%',
@@ -492,7 +494,7 @@ function Intro({ t }) {
           <Switch />
         </Form.Item>
         <Form.Item {...tailLayout}>
-          <Button type="default" htmlType="submit" block>
+          <Button className="yellow-button" type="default" htmlType="submit" block>
             Submit
           </Button>
         </Form.Item>
@@ -531,7 +533,7 @@ function Intro({ t }) {
         <Col>
           <PromotedBox>
             Promoted pools
-            <Button>Select a Pool</Button>
+            <Button className="yellow-button">Select a Pool</Button>
           </PromotedBox>
         </Col>
       </Row>
