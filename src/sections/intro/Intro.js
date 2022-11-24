@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react';
 import _ from 'lodash';
 import {
-  Row, Col, Button, Image, Tabs, Form, Input, Select, Switch, Slider, Modal, Steps, message, Spin,
+  Row, Col, Button, Image, Tabs, Form, Select, Switch, Slider, Modal, Steps, Spin,
 } from 'antd';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import BN from 'bn.js';
@@ -22,7 +22,7 @@ import imgMgx from '../../assets/image/mgx.svg';
 // import imgKsm from '../../assets/image/ksm.svg';
 
 const { TURING_ENDPOINT, MANGATA_ENDPOINT, MANGATA_PARA_ID } = env;
-const { MGR: { decimal: MGR_DECIMAL }, TUR: { decimal: TUR_DECIMAL } } = tokenConfig;
+const { MGR: { decimal: MGR_DECIMAL } } = tokenConfig;
 
 const { Option } = Select;
 
@@ -46,6 +46,9 @@ const PromotedBox = styled.div`
     align-items: center;
     -webkit-box-pack: justify;
     justify-content: space-between;
+    color: rgb(255, 215, 2);
+    font-weight: 400;
+    font-size: 15px;
 `;
 
 const SwapBox = styled.div`
@@ -76,7 +79,7 @@ const tailLayout = {
   },
 };
 
-function Intro({ t }) {
+function Intro() {
   const gContext = useContext(GlobalContext);
   const { alice } = gContext;
   // const { isModalVisible, setIsModalVisible } = gContext;
@@ -91,7 +94,7 @@ function Intro({ t }) {
   const [compoundFrequency, setCompoundFrequency] = useState(new BN(0));
 
   const [compoundPercentage, setCompoundPercentage] = useState(new BN(0));
-  const [autoCompoundEnabled, setAutoCompoundEnabled] = useState(new BN(0));
+  // const [autoCompoundEnabled, setAutoCompoundEnabled] = useState(new BN(0));
 
   const listenEvents = async (api) => new Promise((resolve) => {
     const listenSystemEvents = async () => {
@@ -315,13 +318,13 @@ function Intro({ t }) {
 
   const onFinish = (values) => {
     console.log(values);
-    const { sliderFrequency, sliderPercentage, autoCompoundSwitch } = values;
+    const { sliderFrequency, sliderPercentage } = values;
     const compoundFrequencyValue = getCompoundFrequency(sliderFrequency);
     const compoundPercentageValue = getCompoundPercentage(sliderPercentage);
 
     setCompoundFrequency(compoundFrequencyValue);
     setCompoundPercentage(compoundPercentageValue);
-    setAutoCompoundEnabled(autoCompoundSwitch);
+    // setAutoCompoundEnabled(autoCompoundSwitch);
 
     setCurrent(0);
     setStep1Confirm(false);
@@ -458,6 +461,7 @@ function Intro({ t }) {
         </Form.Item>
         <Form.Item name="sliderFrequency" label="Frequency" tooltip="This is a required field">
           <Slider
+            tooltip={{ formatter: null }}
             step={33}
             marks={{
               0: 'Every 7 day',
@@ -474,6 +478,7 @@ function Intro({ t }) {
 
         >
           <Slider
+            tooltip={{ formatter: null }}
             step={33}
             marks={{
               0: '25%',
@@ -492,7 +497,7 @@ function Intro({ t }) {
           <Switch />
         </Form.Item>
         <Form.Item {...tailLayout}>
-          <Button type="default" htmlType="submit" block>
+          <Button className="yellow-button" type="default" htmlType="submit" block>
             Submit
           </Button>
         </Form.Item>
@@ -501,7 +506,7 @@ function Intro({ t }) {
         centered
         open={open}
         onCancel={onModalCancelClicked}
-        closable={isLoading}
+        closable={!isLoading}
         maskClosable={false}
         footer={null}
         width={800}
@@ -531,7 +536,7 @@ function Intro({ t }) {
         <Col>
           <PromotedBox>
             Promoted pools
-            <Button>Select a Pool</Button>
+            <Button className="yellow-button">Select a Pool</Button>
           </PromotedBox>
         </Col>
       </Row>
