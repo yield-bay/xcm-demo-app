@@ -502,6 +502,7 @@ function Intro({ t }) {
         open={open}
         onCancel={onModalCancelClicked}
         closable={isLoading}
+        maskClosable={false}
         footer={null}
         width={800}
         className="steps-modal"
