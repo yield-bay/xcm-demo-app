@@ -173,10 +173,10 @@ body {
   margin-top: -4px;
 }
 
-// .ant-select-item-option-state {
-//   background-color: red;
-// }
-
 .ant-select-dropdown .ant-select-item-option-selected:not(.ant-select-item-option-disabled) {
   background-color: rgb(255, 215, 2, 0.7);
+}
+
+.ant-steps.ant-steps-horizontal:not(.ant-steps-label-vertical) .ant-steps-item-description {
+  max-width: 100%;
 }
