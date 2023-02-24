@@ -10,7 +10,9 @@ class Account {
   constructor(name) {
     this.name = name;
     const keyring = new Keyring();
-    this.keyring = keyring.addFromUri(`//${name}`, undefined, 'sr25519');
+    console.log("addr", process.env.NEXT_PUBLIC_USER_ADDR);
+    this.keyring = keyring.addFromAddress(process.env.NEXT_PUBLIC_USER_ADDR);
+    // this.keyring = keyring.addFromUri(`//${name}`, undefined, 'sr25519');
     this.publicKey = this.keyring.address;
 
     const mangataAddress = keyring.encodeAddress(this.publicKey, chainConfig.mangata.ss58);
@@ -44,23 +46,27 @@ class Account {
     const balancePromises = _.map(mangataHelper.assets, async (asset) => {
       const { symbol } = asset;
       const mangataBalance = await mangataHelper.getBalance(symbol, mangataAssets.address);
-      const { decimal } = tokenConfig[symbol];
+      console.log("symbol", symbol);
+      console.log("tokenConfig", tokenConfig, "ts", tokenConfig[symbol]);
+      if (tokenConfig[symbol] !== undefined) {
+        const { decimal } = tokenConfig[symbol];
 
-      // Update value of existing symbol or add a new symbol if not exists
-      if (_.find(mangataAssets.tokens, { symbol })) {
-        _.merge(mangataAssets.tokens, {
-          symbol,
-          balance: mangataBalance.free,
-          balanceFloat: mangataBalance.free.div(new BN(decimal)).toNumber(),
-        });
-      } else {
-        mangataAssets.tokens.push(
-          {
+        // Update value of existing symbol or add a new symbol if not exists
+        if (_.find(mangataAssets.tokens, { symbol })) {
+          _.merge(mangataAssets.tokens, {
             symbol,
             balance: mangataBalance.free,
             balanceFloat: mangataBalance.free.div(new BN(decimal)).toNumber(),
-          },
-        );
+          });
+        } else {
+          mangataAssets.tokens.push(
+            {
+              symbol,
+              balance: mangataBalance.free,
+              balanceFloat: mangataBalance.free.div(new BN(decimal)).toNumber(),
+            },
+          );
+        }
       }
     });
 

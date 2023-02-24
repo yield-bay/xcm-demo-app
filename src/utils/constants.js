@@ -27,7 +27,40 @@ const tokenConfig = {
   TUR: {
     decimal: '10000000000',
   },
+  IMBU: {
+    decimal: '1000000000000',
+  },
+  KSM: {
+    decimal: '1000000000000',
+  },
+  MGX: {
+    decimal: '1000000000000',
+  },
+  USDR: {
+    decimal: '1000000000000000000',
+  },
   'MGR-TUR': {
+    decimal: '1000000000000000000',
+  },
+  'ROC-IMBU': {
+    decimal: '1000000000000000000',
+  },
+  'MGR-IMBR': {
+    decimal: '1000000000000000000',
+  },
+  'MGR-BNC': {
+    decimal: '1000000000000000000',
+  },
+  'KAR-TUR': {
+    decimal: '1000000000000000000',
+  },
+  'MGR-BNC': {
+    decimal: '1000000000000000000',
+  },
+  'MGR-BNC': {
+    decimal: '1000000000000000000',
+  },
+  'MGR-BNC': {
     decimal: '1000000000000000000',
   },
 };

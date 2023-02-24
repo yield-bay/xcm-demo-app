@@ -80,7 +80,7 @@ class MangataHelper {
 
   addProxy = async (proxyAccount, keyPair) => this.api.tx.proxy.addProxy(proxyAccount, 'Any', 0).signAndSend(keyPair);
 
-  createProxyCall = async (address, extrinsic) => this.api.tx.proxy.proxy(address, 'Any', extrinsic);
+  createProxyCall = async (address, extrinsic) => this.api.tx.proxy.proxy(address, null, extrinsic);
 
   mintToken = async (address, symbol, keyring, amount = 5000000000000000) => {
     const tokenId = (_.find(this.assets, { symbol })).id;

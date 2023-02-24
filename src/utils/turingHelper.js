@@ -90,15 +90,16 @@ class TuringHelper {
     });
   };
 
-  sendXcmExtrinsic = async (xcmpCall, keyPair, taskId) => new Promise((resolve) => {
+  sendXcmExtrinsic = async (xcmpCall, keyPair, signer, taskId) => new Promise((resolve) => {
     const send = async () => {
-      const unsub = await xcmpCall.signAndSend(keyPair, { nonce: -1 }, async ({ status }) => {
+      const unsub = await xcmpCall.signAndSend(keyPair, { signer: signer, nonce: -1 }, async ({ status }) => {
         console.log(`Status: ${status.type}`);
         if (status.isInBlock) {
           console.log(`Successful with hash ${status.asInBlock.toHex()}`);
+          console.log("keyPair", keyPair);
 
           // Get Task
-          const task = await this.api.query.automationTime.accountTasks(keyPair.address, taskId);
+          const task = await this.api.query.automationTime.accountTasks(keyPair, taskId);
           console.log('Task:', task.toHuman());
 
           unsub();

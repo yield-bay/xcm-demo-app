@@ -54,7 +54,7 @@ function HomeV2() {
       await mangataHelper.initialize(MANGATA_ENDPOINT);
 
       console.log('Reading token and balance of Alice and Bob accounts ...');
-      const account = new Account('Alice');
+      const account = new Account('abc');
       await account.init();
       account.print();
 
@@ -68,16 +68,18 @@ function HomeV2() {
     if (!account) {
       return;
     }
+    console.log("account.assets[1].address", account.assets[1].address);
     const mangataAddress = account.assets[1].address;
     setTurBalance(await mangataHelper.getBalance('TUR', mangataAddress));
     setMgrBalance(await mangataHelper.getBalance('MGR', mangataAddress));
+    console.log("mangataHelper.getBalance('MGR-TUR', mangataAddress)", await mangataHelper.getBalance('MGR-TUR', mangataAddress));
     setliquidityTokenBalance(await mangataHelper.getBalance('MGR-TUR', mangataAddress));
   };
 
   const startUpdateBalances = useCallback(() => {
     setInterval(() => {
       updateBalances(alice);
-    }, 1000);
+    }, 69000);
   }, [alice]);
 
   useEffect(() => {
