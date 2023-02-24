@@ -3,7 +3,6 @@ import {
 } from '@fortawesome/free-brands-svg-icons';
 import { faEnvelopeSquare } from '@fortawesome/pro-solid-svg-icons';
 
-
 const config = {
   company: 'OAK Network',
   website: 'https://oak.tech',

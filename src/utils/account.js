@@ -7,15 +7,18 @@ import mangataHelper from './mangataHelper';
 import { chainConfig, tokenConfig } from './constants';
 
 class Account {
-  constructor(name) {
-    this.name = name;
+  constructor(walletName, walletAddress) {
+    this.name = walletName;
     const keyring = new Keyring();
-    console.log("addr", process.env.NEXT_PUBLIC_USER_ADDR);
-    this.keyring = keyring.addFromAddress(process.env.NEXT_PUBLIC_USER_ADDR);
+    console.log('user address:', walletAddress);
+    this.keyring = keyring.addFromAddress(walletAddress);
     // this.keyring = keyring.addFromUri(`//${name}`, undefined, 'sr25519');
     this.publicKey = this.keyring.address;
 
-    const mangataAddress = keyring.encodeAddress(this.publicKey, chainConfig.mangata.ss58);
+    const mangataAddress = keyring.encodeAddress(
+      this.publicKey,
+      chainConfig.mangata.ss58,
+    );
 
     this.assets = [
       {
@@ -37,17 +40,20 @@ class Account {
   }
 
   /**
-     * Read token balances of Alice’s wallet address from both Mangata and Turing
-     * This call can be called repeatedly after any chain state update
-     */
+   * Read token balances of Alice’s wallet address from both Mangata and Turing
+   * This call can be called repeatedly after any chain state update
+   */
   async init() {
     const mangataAssets = _.find(this.assets, { chain: 'mangata' });
 
     const balancePromises = _.map(mangataHelper.assets, async (asset) => {
       const { symbol } = asset;
-      const mangataBalance = await mangataHelper.getBalance(symbol, mangataAssets.address);
-      console.log("symbol", symbol);
-      console.log("tokenConfig", tokenConfig, "ts", tokenConfig[symbol]);
+      const mangataBalance = await mangataHelper.getBalance(
+        symbol,
+        mangataAssets.address,
+      );
+      console.log('symbol', symbol);
+      console.log('tokenConfig', tokenConfig, 'ts', tokenConfig[symbol]);
       if (tokenConfig[symbol] !== undefined) {
         const { decimal } = tokenConfig[symbol];
 
@@ -59,13 +65,11 @@ class Account {
             balanceFloat: mangataBalance.free.div(new BN(decimal)).toNumber(),
           });
         } else {
-          mangataAssets.tokens.push(
-            {
-              symbol,
-              balance: mangataBalance.free,
-              balanceFloat: mangataBalance.free.div(new BN(decimal)).toNumber(),
-            },
-          );
+          mangataAssets.tokens.push({
+            symbol,
+            balance: mangataBalance.free,
+            balanceFloat: mangataBalance.free.div(new BN(decimal)).toNumber(),
+          });
         }
       }
     });
@@ -75,7 +79,11 @@ class Account {
     const turing = _.find(this.assets, { chain: 'turing' });
     const balance = await turingHelper.getBalance(turing.address);
     const { decimal } = tokenConfig.TUR;
-    turing.tokens.push({ symbol: 'TUR', balance: balance.free, balanceFloat: balance.free.div(new BN(decimal)).toNumber() });
+    turing.tokens.push({
+      symbol: 'TUR',
+      balance: balance.free,
+      balanceFloat: balance.free.div(new BN(decimal)).toNumber(),
+    });
   }
 
   print() {

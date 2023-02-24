@@ -23,6 +23,7 @@
     "@next/font": "^13.0.4",
     "@polkadot/api": "^9.3.3",
     "@polkadot/extension-dapp": "^0.44.9",
+    "@polkadot/util-crypto": "^10.4.2",
     "@polkadot/wasm-crypto-asmjs": "^6.3.1",
     "@polkadot/wasm-crypto-wasm": "^6.3.1",
     "antd": "^5.0.0",

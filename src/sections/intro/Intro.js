@@ -1,7 +1,19 @@
 import React, { useContext, useState } from 'react';
 import _ from 'lodash';
 import {
-  Row, Col, Button, Image, Tabs, Form, Select, Switch, Slider, Modal, Steps, Spin,
+  Row,
+  Col,
+  Button,
+  Image,
+  Tabs,
+  Form,
+  Select,
+  Switch,
+  Slider,
+  Modal,
+  Steps,
+  Spin,
+  InputNumber,
 } from 'antd';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import BN from 'bn.js';
@@ -24,7 +36,9 @@ import imgMgx from '../../assets/image/mgx.svg';
 // import imgKsm from '../../assets/image/ksm.svg';
 
 const { TURING_ENDPOINT, MANGATA_ENDPOINT, MANGATA_PARA_ID } = env;
-const { MGR: { decimal: MGR_DECIMAL } } = tokenConfig;
+const {
+  MGR: { decimal: MGR_DECIMAL },
+} = tokenConfig;
 
 const { Option } = Select;
 
@@ -36,34 +50,34 @@ const Container = styled.div`
 `;
 
 const PromotedBox = styled.div`
-    width: 480px;
-    margin-bottom: 8px;
-    padding: 16px;
-    background-color: rgba(255, 215, 2, 0.17);
-    border-radius: 4px;
-    position: relative;
-    display: flex;
-    flex-direction: row;
-    -webkit-box-align: center;
-    align-items: center;
-    -webkit-box-pack: justify;
-    justify-content: space-between;
-    color: rgb(255, 215, 2);
-    font-weight: 400;
-    font-size: 15px;
+  width: 480px;
+  margin-bottom: 8px;
+  padding: 16px;
+  background-color: rgba(255, 215, 2, 0.17);
+  border-radius: 4px;
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  -webkit-box-align: center;
+  align-items: center;
+  -webkit-box-pack: justify;
+  justify-content: space-between;
+  color: rgb(255, 215, 2);
+  font-weight: 400;
+  font-size: 15px;
 `;
 
 const SwapBox = styled.div`
-    width: 448px;
-    padding: 32px;
-    background-color: rgba(255, 255, 255, 0.04);
-    border-width: 1px;
-    border-style: solid;
-    border-color: rgba(255, 255, 255, 0.25);
-    border-radius: 4px;
-    position: relative;
-    display: flex;
-    flex-direction: column;
+  width: 448px;
+  padding: 32px;
+  background-color: rgba(255, 255, 255, 0.04);
+  border-width: 1px;
+  border-style: solid;
+  border-color: rgba(255, 255, 255, 0.25);
+  border-radius: 4px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
 `;
 
 const layout = {
@@ -98,39 +112,44 @@ function Intro() {
   const [compoundPercentage, setCompoundPercentage] = useState(new BN(0));
   // const [autoCompoundEnabled, setAutoCompoundEnabled] = useState(new BN(0));
 
-  const listenEvents = async (api) => new Promise((resolve) => {
-    const listenSystemEvents = async () => {
-      const unsub = await api.query.system.events((events) => {
-        let foundEvent = false;
-        // Loop through the Vec<EventRecord>
-        events.forEach((record) => {
-          // Extract the phase, event and the event types
-          const { event, phase } = record;
-          const { section, method, typeDef: types } = event;
+  const [tokenAmount, setTokenAmount] = useState(0);
 
-          // console.log('section.method: ', `${section}.${method}`);
-          if (section === 'proxy' && method === 'ProxyExecuted') {
-            foundEvent = true;
-            // Show what we are busy with
-            console.log(`\t${section}:${method}:: (phase=${phase.toString()})`);
-            // console.log(`\t\t${event.meta.documentation.toString()}`);
+  const listenEvents = async (api) =>
+    new Promise((resolve) => {
+      const listenSystemEvents = async () => {
+        const unsub = await api.query.system.events((events) => {
+          let foundEvent = false;
+          // Loop through the Vec<EventRecord>
+          events.forEach((record) => {
+            // Extract the phase, event and the event types
+            const { event, phase } = record;
+            const { section, method, typeDef: types } = event;
 
-            // Loop through each of the parameters, displaying the type and data
-            event.data.forEach((data, index) => {
-              console.log(`\t\t\t${types[index].type}: ${data.toString()}`);
-            });
+            // console.log('section.method: ', `${section}.${method}`);
+            if (section === 'proxy' && method === 'ProxyExecuted') {
+              foundEvent = true;
+              // Show what we are busy with
+              console.log(
+                `\t${section}:${method}:: (phase=${phase.toString()})`,
+              );
+              // console.log(`\t\t${event.meta.documentation.toString()}`);
+
+              // Loop through each of the parameters, displaying the type and data
+              event.data.forEach((data, index) => {
+                console.log(`\t\t\t${types[index].type}: ${data.toString()}`);
+              });
+            }
+          });
+
+          if (foundEvent) {
+            unsub();
+            resolve();
           }
         });
+      };
 
-        if (foundEvent) {
-          unsub();
-          resolve();
-        }
-      });
-    };
-
-    listenSystemEvents().catch(console.error);
-  });
+      listenSystemEvents().catch(console.error);
+    });
 
   const onRequestAutoCompound = async () => {
     setLoading(true);
@@ -143,43 +162,87 @@ function Intro() {
     const mangataAddress = alice.assets[1].address;
     const turingAddress = alice.assets[2].address;
 
-    const { reserved: oldLiquidityBalance } = await mangataHelper.getBalance('MGR-TUR', mangataAddress);
+    const { reserved: oldLiquidityBalance } = await mangataHelper.getBalance(
+      'MGR-TUR',
+      mangataAddress,
+    );
 
     const lquidityToken = 'MGR-TUR';
-    console.log(`Checking how much reward available in ${lquidityToken} pool ...`);
-    const rewardAmount = await mangataHelper.calculateRewardsAmount(mangataAddress, lquidityToken);
+    console.log(
+      `Checking how much reward available in ${lquidityToken} pool ...`,
+    );
+    const rewardAmount = await mangataHelper.calculateRewardsAmount(
+      mangataAddress,
+      lquidityToken,
+    );
     console.log(`Claimable reward in ${lquidityToken}: `, rewardAmount);
 
-    const liquidityBalance = await mangataHelper.getBalance('MGR-TUR', mangataAddress);
+    const liquidityBalance = await mangataHelper.getBalance(
+      'MGR-TUR',
+      mangataAddress,
+    );
     // const free = liquidityBalance.free.div(new BN('1000000000000000000'));
-    const reserved = liquidityBalance.reserved.div(new BN('1000000000000000000'));
+    const reserved = liquidityBalance.reserved.div(
+      new BN('1000000000000000000'),
+    );
 
-    console.log(`Before auto-compound, Alice’s reserved "MGR-TUR": ${formatNumberThousands(reserved.toNumber())} ...`);
+    console.log(
+      `Before auto-compound, Alice’s reserved "MGR-TUR": ${formatNumberThousands(
+        reserved.toNumber(),
+      )} ...`,
+    );
 
     console.log('\nStart to schedule an auto-compound call via XCM ...');
     const liquidityTokenId = mangataHelper.getTokenIdBySymbol('MGR-TUR');
-    const proxyExtrinsic = mangataHelper.api.tx.xyk.compoundRewards(liquidityTokenId, 5);
-    const mangataProxyCall = await mangataHelper.createProxyCall(mangataAddress, proxyExtrinsic);
-    const encodedMangataProxyCall = mangataProxyCall.method.toHex(mangataProxyCall);
-    const mangataProxyCallFees = await mangataProxyCall.paymentInfo(mangataAddress);
+    // TODO
+    const proxyExtrinsic = mangataHelper.api.tx.xyk.compoundRewards(
+      liquidityTokenId,
+      5,
+    );
+    console.log('LP Token', liquidityTokenId);
+    const mangataProxyCall = await mangataHelper.createProxyCall(
+      mangataAddress,
+      proxyExtrinsic,
+    );
+    const encodedMangataProxyCall =
+      mangataProxyCall.method.toHex(mangataProxyCall);
+    const mangataProxyCallFees = await mangataProxyCall.paymentInfo(
+      mangataAddress,
+    );
 
     console.log('encodedMangataProxyCall: ', encodedMangataProxyCall);
     console.log('mangataProxyCallFees: ', mangataProxyCallFees.toHuman());
 
     console.log('\n1. Create the call for scheduleXcmpTask ');
-    const providedId = `xcmp_automation_test_${(Math.random() + 1).toString(36).substring(7)}`;
+    const providedId = `xcmp_automation_test_${(Math.random() + 1)
+      .toString(36)
+      .substring(7)}`;
 
     const secPerHour = 3600;
     const msPerHour = 3600 * 1000;
     const currentTimestamp = moment().valueOf();
-    const timestampNextHour = (currentTimestamp - (currentTimestamp % msPerHour)) / 1000 + secPerHour;
-    const timestampTwoHoursLater = (currentTimestamp - (currentTimestamp % msPerHour)) / 1000 + (secPerHour * 2);
+    const timestampNextHour =
+      (currentTimestamp - (currentTimestamp % msPerHour)) / 1000 + secPerHour;
+    const timestampTwoHoursLater =
+      (currentTimestamp - (currentTimestamp % msPerHour)) / 1000 +
+      secPerHour * 2;
 
-    console.log("providedId", providedId, "MANGATA_PARA_ID", MANGATA_PARA_ID, "timestampNextHour", timestampNextHour, "timestampTwoHoursLater", timestampTwoHoursLater);
+    console.log(
+      'providedId',
+      providedId,
+      'MANGATA_PARA_ID',
+      MANGATA_PARA_ID,
+      'timestampNextHour',
+      timestampNextHour,
+      'timestampTwoHoursLater',
+      timestampTwoHoursLater,
+    );
     const xcmpCall = turingHelper.api.tx.automationTime.scheduleXcmpTask(
       providedId,
       // { Fixed: { executionTimes: [0] } },
-      { Fixed: { executionTimes: [timestampNextHour, timestampTwoHoursLater] } },
+      {
+        Fixed: { executionTimes: [timestampNextHour, timestampTwoHoursLater] },
+      },
       MANGATA_PARA_ID,
       0,
       encodedMangataProxyCall,
@@ -194,30 +257,43 @@ function Intro() {
     // console.log('xcmFrees:', xcmFrees.toHuman());
 
     // Get a TaskId from Turing rpc
-    const taskId = await turingHelper.api.rpc.automationTime.generateTaskId(turingAddress, providedId);
+    const taskId = await turingHelper.api.rpc.automationTime.generateTaskId(
+      turingAddress,
+      providedId,
+    );
     console.log('TaskId:', taskId.toHuman());
 
     console.log('\n3. Sign and send scheduleXcmpTask call ...');
-    console.log("alice.publicKey", alice.publicKey);
+    console.log('alice.publicKey', alice.publicKey);
     const { web3FromAddress } = polkadotExtensionHelper.getExtension();
     const injector = await web3FromAddress(alice.publicKey);
     // const signRaw = injector?.signer
-    const txHash = await turingHelper.sendXcmExtrinsic(xcmpCall, alice.publicKey, injector?.signer, taskId);
+    const txHash = await turingHelper.sendXcmExtrinsic(
+      xcmpCall,
+      alice.publicKey,
+      injector?.signer,
+      taskId,
+    );
 
     console.log('\nWaiting 20 seconds before reading new chain states ...');
 
     // TODO: how do we know the task happens? Could we stream reading events on Mangata side?
-    // console.log(`\n4. waiting for XCM events on Mangata side ...`);
+    console.log('\n4. waiting for XCM events on Mangata side ...');
 
     await listenEvents(mangataHelper.api);
     await delay(20000);
 
-    const { reserved: newLiquidityBalance } = await mangataHelper.getBalance('MGR-TUR', mangataAddress);
+    const { reserved: newLiquidityBalance } = await mangataHelper.getBalance(
+      'MGR-TUR',
+      mangataAddress,
+    );
 
     console.log('oldLiquidityBalance:', oldLiquidityBalance.toString());
     console.log('newLiquidityBalance:', newLiquidityBalance.toString());
 
-    const increment = newLiquidityBalance.sub(oldLiquidityBalance).div(new BN(MGR_DECIMAL));
+    const increment = newLiquidityBalance
+      .sub(oldLiquidityBalance)
+      .div(new BN(MGR_DECIMAL));
     setLiquidityIncrement(increment);
     setCompoundTxHash(txHash);
     setLoading(false);
@@ -232,7 +308,9 @@ function Intro() {
         <div className="flex-grow-1">MAX</div>
       </div>
       <div className="flex flex-right margin-left-12">
-        <div className="flex-grow-1"><Image src={imgMgx} alt="MGX Token Icon" width={24} height={24} /></div>
+        <div className="flex-grow-1">
+          <Image src={imgMgx} alt="MGX Token Icon" width={24} height={24} />
+        </div>
         <div className="flex-grow-10">MGX</div>
         <div className="flex-grow-1">0.0</div>
       </div>
@@ -273,14 +351,34 @@ function Intro() {
       <div className="flex flex-right width-100 margin-bottom-24">
         <div className="flex-grow-10">Est. 30 days rewards</div>
         <div className="flex-grow-1">
-          <div color="textOnPremiumSurface" fontSize="14" fontWeight="600" className="inline-block margin-right-6">
-            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ strokeWidth: 2, display: 'block' }}><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg>
+          <div
+            color="textOnPremiumSurface"
+            fontSize="14"
+            fontWeight="600"
+            className="inline-block margin-right-6"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              style={{ strokeWidth: 2, display: 'block' }}
+            >
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+            </svg>
           </div>
           <div className="inline-block">0 MGX</div>
         </div>
       </div>
       <div className=" margin-bottom-24">
-        On top of rewards, you will earn fees from trades proportional to your share of the pool. The fee is variable and depends on the amount of the trade.
+        On top of rewards, you will earn fees from trades proportional to your
+        share of the pool. The fee is variable and depends on the amount of the
+        trade.
       </div>
       <div className="flex width-100">
         <Button style={{ margin: '0 auto' }}>ENTER AN AMOUNT</Button>
@@ -314,9 +412,11 @@ function Intro() {
   const getCompoundPercentage = (sliderValue) => {
     if (sliderValue < 33) {
       return 25;
-    } if (sliderValue < 66) {
+    }
+    if (sliderValue < 66) {
       return 50;
-    } if (sliderValue < 99) {
+    }
+    if (sliderValue < 99) {
       return 75;
     }
     return 100;
@@ -325,16 +425,23 @@ function Intro() {
   const getCompoundFrequency = (sliderValue) => {
     if (sliderValue < 33) {
       return 7;
-    } if (sliderValue < 66) {
+    }
+    if (sliderValue < 66) {
       return 5;
-    } if (sliderValue < 99) {
+    }
+    if (sliderValue < 99) {
       return 3;
     }
     return 1;
   };
 
+  const onChangeTokenAmount = (value) => {
+    console.log('Token Amount', value);
+    setTokenAmount(value);
+  };
+
   const onFinish = (values) => {
-    console.log(values);
+    console.log('Values on Finish', values);
     const { sliderFrequency, sliderPercentage } = values;
     const compoundFrequencyValue = getCompoundFrequency(sliderFrequency);
     const compoundPercentageValue = getCompoundPercentage(sliderPercentage);
@@ -364,6 +471,7 @@ function Intro() {
     setOpen(false);
   };
 
+  // Transaction steps after clicking Submit
   const steps = [
     {
       title: 'Step 1',
@@ -374,22 +482,49 @@ function Intro() {
         <>
           <Row className="modal-row">
             <Col span={24}>Transaction Hash: </Col>
+            {/* TODO: Add transaction Hash here */}
           </Row>
           <Row justify="center" gutter={24}>
-            <Col span={6}><Button type="primary" onClick={() => next()} style={{ width: '100%' }}>Next</Button></Col>
+            <Col span={6}>
+              <Button
+                type="primary"
+                onClick={() => next()}
+                style={{ width: '100%' }}
+              >
+                Next
+              </Button>
+            </Col>
           </Row>
         </>
       ) : (
         <>
           <Row className="modal-row">
-            <Col span={24} className="modal-row-title">One-time setup - getting your wallets ready</Col>
+            <Col span={24} className="modal-row-title">
+              One-time setup - getting your wallets ready
+            </Col>
             <Col span={24}>Create and config a proxy wallet</Col>
             <Col span={24}>Swap MGX for TUR if there’s not any</Col>
             <Col span={24}>Withdraw TUR to Turing Network</Col>
           </Row>
           <Row justify="center" gutter={24}>
-            <Col span={6}><Button type="primary" onClick={onStep1ConfirmClicked} style={{ width: '100%' }}>Confirm</Button></Col>
-            <Col span={6}><Button type="default" onClick={onModalCancelClicked} style={{ width: '100%' }}>Cancel</Button></Col>
+            <Col span={6}>
+              <Button
+                type="default"
+                onClick={onModalCancelClicked}
+                style={{ width: '100%' }}
+              >
+                Cancel
+              </Button>
+            </Col>
+            <Col span={6}>
+              <Button
+                type="primary"
+                onClick={onStep1ConfirmClicked}
+                style={{ width: '100%' }}
+              >
+                Confirm
+              </Button>
+            </Col>
           </Row>
         </>
       ),
@@ -404,24 +539,53 @@ function Intro() {
           <Row className="modal-row">
             <Col span={24}>Transaction Hash: </Col>
             <Col span={24}>{compoundTxHash}</Col>
-            <Col span={24}>{`Lquidity Token Increment: ${formatNumberThousands(liquidityIncrement.toNumber())} MGR-TUR`}</Col>
+            <Col span={24}>{`Lquidity Token Increment: ${formatNumberThousands(
+              liquidityIncrement.toNumber(),
+            )} MGR-TUR`}
+            </Col>
           </Row>
           <Row justify="center" gutter={24}>
-            <Col span={6}><Button type="primary" onClick={onModalCancelClicked} style={{ width: '100%' }}>Complete</Button></Col>
+            <Col span={6}>
+              <Button
+                type="primary"
+                onClick={onModalCancelClicked}
+                style={{ width: '100%' }}
+              >
+                Complete
+              </Button>
+            </Col>
           </Row>
         </>
       ) : (
         <>
           <Row className="modal-row">
-            <Col span={24} className="modal-row-title">Setting up your compound task</Col>
+            <Col span={24} className="modal-row-title">
+              Setting up your compound task
+            </Col>
             <Col span={24}>Composing task registration on Turing Network</Col>
             <Col span={24}>{`Frequency: ${compoundFrequency} Day`}</Col>
             <Col span={24}>{`Percertage: ${compoundPercentage}%`}</Col>
             <Col span={24}>Expiration: good till cancel</Col>
           </Row>
           <Row justify="center" gutter={24}>
-            <Col span={6}><Button type="primary" onClick={onStep2ConfirmClicked} style={{ width: '100%' }}>Confirm</Button></Col>
-            <Col span={6}><Button type="default" onClick={onModalCancelClicked} style={{ width: '100%' }}>Cancel</Button></Col>
+            <Col span={6}>
+              <Button
+                type="primary"
+                onClick={onStep2ConfirmClicked}
+                style={{ width: '100%' }}
+              >
+                Confirm
+              </Button>
+            </Col>
+            <Col span={6}>
+              <Button
+                type="default"
+                onClick={onModalCancelClicked}
+                style={{ width: '100%' }}
+              >
+                Cancel
+              </Button>
+            </Col>
           </Row>
         </>
       ),
@@ -447,13 +611,19 @@ function Intro() {
         onFinish={onFinish}
         style={{ width: '80%', margin: '24px auto' }}
         initialValues={{
-          select: 'select-mgx-tur', sliderPercentage: 0, sliderFrequency: 0, autoCompoundSwitch: false,
+          select: 'select-mgx-tur',
+          sliderPercentage: 0,
+          sliderFrequency: 0,
+          autoCompoundSwitch: false,
         }}
       >
         <Form.Item
           name="select"
           label="Select a Liquidity Pool"
-          tooltip={{ title: 'Tooltip with customize icon', icon: <InfoCircleOutlined /> }}
+          tooltip={{
+            title: 'Select a liquidity pool',
+            icon: <InfoCircleOutlined />,
+          }}
           rules={[
             {
               required: true,
@@ -476,7 +646,26 @@ function Intro() {
             </Option>
           </Select>
         </Form.Item>
-        <Form.Item name="sliderFrequency" label="Frequency" tooltip="This is a required field">
+        <Form.Item
+          name="amount"
+          label="Enter a token amount"
+          rules={[
+            {
+              required: true,
+            },
+          ]}
+        >
+          <InputNumber
+            min={1}
+            defaultValue={tokenAmount}
+            onChange={onChangeTokenAmount}
+          />
+        </Form.Item>
+        <Form.Item
+          name="sliderFrequency"
+          label="Frequency"
+          tooltip="This is a required field"
+        >
           <Slider
             tooltip={{ formatter: null }}
             step={33}
@@ -491,8 +680,10 @@ function Intro() {
         <Form.Item
           name="sliderPercentage"
           label="Percentage of Claimed Reward"
-          tooltip={{ title: 'Tooltip with customize icon', icon: <InfoCircleOutlined /> }}
-
+          tooltip={{
+            title: 'Tooltip with customize icon',
+            icon: <InfoCircleOutlined />,
+          }}
         >
           <Slider
             tooltip={{ formatter: null }}
@@ -509,12 +700,20 @@ function Intro() {
           label="Auto-compound"
           name="autoCompoundSwitch"
           valuePropName="checked"
-          tooltip={{ title: 'Tooltip with customize icon', icon: <InfoCircleOutlined /> }}
+          tooltip={{
+            title: 'Tooltip with customize icon',
+            icon: <InfoCircleOutlined />,
+          }}
         >
           <Switch />
         </Form.Item>
         <Form.Item {...tailLayout}>
-          <Button className="yellow-button" type="default" htmlType="submit" block>
+          <Button
+            className="yellow-button"
+            type="default"
+            htmlType="submit"
+            block
+          >
             Submit
           </Button>
         </Form.Item>
@@ -557,6 +756,7 @@ function Intro() {
           </PromotedBox>
         </Col>
       </Row>
+      {/* Main Center Component */}
       <Row justify="center">
         <Col>
           <SwapBox>

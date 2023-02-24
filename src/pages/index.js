@@ -1,6 +1,5 @@
 import React from 'react';
-
-import HomeV2 from './home';
+import HomeV2 from '../components/Home';
 
 function IndexPage() {
   return <HomeV2 />;
